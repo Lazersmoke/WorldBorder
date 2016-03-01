@@ -21,6 +21,7 @@ import org.bukkit.Effect;
 import org.bukkit.entity.Player;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.Bukkit;
 
 
 public class Config
@@ -56,6 +57,7 @@ public class Config
 	private static int fillMemoryTolerance = 500;
 	private static boolean preventBlockPlace = false;
 	private static boolean preventMobSpawn = false;
+	private static boolean forceMinecraftBorder = false;
 
 	// for monitoring plugin efficiency
 //	public static long timeUsed = 0;
@@ -71,6 +73,16 @@ public class Config
 		borders.put(world, border);
 		if (logIt)
 			log("Border set. " + BorderDescription(world));
+		if (forceMinecraftBorder) {
+			try {
+				World bWorld = Bukkit.getWorld(world);
+				org.bukkit.WorldBorder wbWorld = bWorld.getWorldBorder();
+				wbWorld.setCenter(border.getX(), border.getZ());
+				wbWorld.setSize(border.getRadius() * 2.0);
+			} catch( Exception e ) { // TODO: wiff
+				wbLog.log(Level.WARNING, "Exception trapped: ", e);
+			}
+		}
 		save(true);
 		DynMapFeatures.showBorder(world, border);
 	}
@@ -600,6 +612,7 @@ public class Config
 		fillMemoryTolerance = cfg.getInt("fill-memory-tolerance", 500);
 		preventBlockPlace = cfg.getBoolean("prevent-block-place");
 		preventMobSpawn = cfg.getBoolean("prevent-mob-spawn");
+		forceMinecraftBorder = cfg.getBoolean("force-minecraft-border", false);
 
 		StartBorderTimer();
 
@@ -708,6 +721,7 @@ public class Config
 		cfg.set("fill-memory-tolerance", fillMemoryTolerance);
 		cfg.set("prevent-block-place", preventBlockPlace);
 		cfg.set("prevent-mob-spawn", preventMobSpawn);
+		cfg.set("force-minecraft-border", forceMinecraftBorder);
 
 		cfg.set("worlds", null);
 		for(Entry<String, BorderData> stringBorderDataEntry : borders.entrySet())
