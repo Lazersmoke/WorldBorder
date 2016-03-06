@@ -67,13 +67,10 @@ public class Config
 		return System.currentTimeMillis();
 	}
 
-
-	public static void setBorder(String world, BorderData border, boolean logIt)
-	{
-		borders.put(world, border);
-		if (logIt)
-			log("Border set. " + BorderDescription(world));
-		if (forceMinecraftBorder) {
+	public static void setMCBorder(String world, BorderData border) {
+		boolean isRound = (border.getShape() != null ? border.getShape().booleanValue() : ShapeRound());
+		if (forceMinecraftBorder && !isRound) {
+			log("Minecraft Border set. " + BorderDescription(world));
 			try {
 				World bWorld = Bukkit.getWorld(world);
 				org.bukkit.WorldBorder wbWorld = bWorld.getWorldBorder();
@@ -83,6 +80,15 @@ public class Config
 				wbLog.log(Level.WARNING, "Exception trapped: ", e);
 			}
 		}
+	}
+
+
+	public static void setBorder(String world, BorderData border, boolean logIt)
+	{
+		borders.put(world, border);
+		if (logIt)
+			log("Border set. " + BorderDescription(world));
+		setMCBorder(world, border);
 		save(true);
 		DynMapFeatures.showBorder(world, border);
 	}
@@ -667,6 +673,7 @@ public class Config
 				boolean wrap = (boolean) bord.getBoolean("wrapping", false);
 				BorderData border = new BorderData(bord.getDouble("x", 0), bord.getDouble("z", 0), bord.getInt("radiusX", 0), bord.getInt("radiusZ", 0), overrideShape, wrap);
 				borders.put(worldName, border);
+				setMCBorder(worldName, border);
 				logConfig(BorderDescription(worldName));
 			}
 		}
