@@ -55,7 +55,7 @@ public class WBListener implements Listener
 			event.setTo(newLoc);
 		}
 
-		BorderCheckTask.timedPlayerExemption(event.getPlayer(), 100l);
+		BorderCheckTask.timedPlayerExemption(event.getPlayer(), 500l);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
