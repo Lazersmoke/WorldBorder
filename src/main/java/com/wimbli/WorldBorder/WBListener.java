@@ -9,7 +9,6 @@ import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.Location;
 
-
 public class WBListener implements Listener
 {
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
@@ -19,11 +18,9 @@ public class WBListener implements Listener
 		if (Config.KnockBack() == 0.0)
 			return;
 
-		if (Config.Debug())
-			Config.log("General Teleport cause: " + event.getCause().toString());
-
-		if (PlayerTeleportEvent.TeleportCause.NETHER_PORTAL == event.getCause()) {
-			Config.log("Skipping teleport management event - covered by onPlayerPortal");
+		if (event instanceof PlayerPortalEvent) { // Avoid overlapping management.
+			if (Config.Debug())
+				Config.log("Skipping teleport management event - covered by onPlayerPortal");
 			return;
 		}
 
@@ -55,7 +52,8 @@ public class WBListener implements Listener
 			event.setTo(newLoc);
 		}
 
-		BorderCheckTask.timedPlayerExemption(event.getPlayer(), 100l);
+		BorderCheckTask.timedPlayerExemption(event.getPlayer(), event.getTo().getWorld().getName(),
+				Config.getMaxExemptionTicks(), Config.getPortalRecheckTicks());
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)

@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.wimbli.WorldBorder</groupId>
 	<artifactId>WorldBorder</artifactId>
-	<version>1.8.7</version>
+	<version>1.8.8</version>
 	<name>WorldBorder</name>
 	<url>https://github.com/Brettflan/WorldBorder</url>
 	<issueManagement>
@@ -60,7 +60,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.0</version>
+				<version>3.5.1</version>
 				<configuration>
 					<source>1.7</source>
 					<target>1.7</target>
