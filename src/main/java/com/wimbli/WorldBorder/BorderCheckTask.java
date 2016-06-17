@@ -48,7 +48,8 @@ public class BorderCheckTask implements Runnable
 	 * In 1.9, there is a significant delay between teleportation event and when the player's location is actually updated.
 	 * However, the player world is updated immediately. This disconnection causes the regular checkPlayer to 
 	 * incorrectly test the player's prior-world location against the new-world location during that amorphous
-	 * in-between period.
+	 * in-between period. Basically, this checks for the location to actually update, e.g. to be different from the
+	 * "from" location of the portal event.
 	 * 
 	 * This function allows a configurable recheck to let Minecraft "catch up" the player's <i>real</i> location.
 	 * 
@@ -59,11 +60,11 @@ public class BorderCheckTask implements Runnable
 	 * this check gracefully. 
 	 * 
 	 * @param player The player who is being exempted.
-	 * @param world The world the player is supposedly now in.
+	 * @param prior the location the player has come from
 	 * @param maxDelay The <i>maximum</i> ticks to spend exempting this player
 	 * @param recheckDelay The ticks to wait inbetween rechecks.
 	 */
-	public static void timedPlayerExemption(final Player player, final String world, final long maxDelay, final long recheckDelay) {
+	public static void timedPlayerExemption(final Player player, final Location prior, final long maxDelay, final long recheckDelay) {
 
 		// Check for existing watch; cancel if one exists.
 		BukkitRunnable alreadyWatching = handlingPlayers.get(player.getName().toLowerCase());
@@ -100,9 +101,9 @@ public class BorderCheckTask implements Runnable
 					}
 					
 					// Are we still stuck between worlds?
-					Location loc = player.getLocation();
-					World worldObj = loc.getWorld();
-					if (world.equals(worldObj.getName())) {
+					Location current = player.getLocation();
+					if (current.getBlockX() != prior.getBlockX() && current.getBlockY() != prior.getBlockY() &&
+							current.getBlockZ() != prior.getBlockZ()) {
 						// No, we made it!
 						this.cancel();
 						handlingPlayers.remove(playerName);
@@ -112,9 +113,9 @@ public class BorderCheckTask implements Runnable
 					}
 					
 					if (Config.Debug()) {
-						Config.log("Based on teleport " + playerName + " is in " + world +
-								" but Minecraft still thinks they are in " + worldObj.getName() +
-								". Checking again in " + recheckDelay);
+						Config.log("Based on teleport " + playerName + 
+								" has moved, but Minecraft still has them at old location " + 
+								prior.toString() + ". Checking again in " + recheckDelay);
 					}
 				}
 			};

@@ -52,7 +52,7 @@ public class WBListener implements Listener
 			event.setTo(newLoc);
 		}
 
-		BorderCheckTask.timedPlayerExemption(event.getPlayer(), event.getTo().getWorld().getName(),
+		BorderCheckTask.timedPlayerExemption(event.getPlayer(), event.getFrom().clone(),
 				Config.getMaxExemptionTicks(), Config.getPortalRecheckTicks());
 	}
 
