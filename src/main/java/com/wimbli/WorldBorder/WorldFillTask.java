@@ -1,18 +1,18 @@
 package com.wimbli.WorldBorder;
 
+import com.wimbli.WorldBorder.Events.WorldBorderFillFinishedEvent;
+import com.wimbli.WorldBorder.Events.WorldBorderFillReportProgressEvent;
+import com.wimbli.WorldBorder.Events.WorldBorderFillStartEvent;
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.Server;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.entity.Player;
-import org.bukkit.Server;
-import org.bukkit.World;
-
-import com.wimbli.WorldBorder.Events.WorldBorderFillFinishedEvent;
-import com.wimbli.WorldBorder.Events.WorldBorderFillStartEvent;
 
 
 public class WorldFillTask implements Runnable
@@ -387,6 +387,7 @@ public class WorldFillTask implements Runnable
 		lastReport = Config.Now();
 		double perc = getPercentageCompleted();
 		if (perc > 100) perc = 100;
+		Bukkit.getServer().getPluginManager().callEvent(new WorldBorderFillReportProgressEvent(world, reportTarget, reportTotal, reportNum));
 		sendMessage(reportNum + " more chunks processed (" + (reportTotal + reportNum) + " total, ~" + Config.coord.format(perc) + "%" + ")");
 		reportTotal += reportNum;
 		reportNum = 0;
